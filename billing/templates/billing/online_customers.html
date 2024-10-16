@@ -1,0 +1,75 @@
+{% extends 'billing/base.html' %}
+
+{% block content %}
+<h2>অনলাইন গ্রাহক</h2>
+
+<form method="GET" action="{% url 'online_customers' %}" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="MAC বা IP ঠিকানা দিয়ে সার্চ করুন" value="{{ search_query }}">
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">সার্চ</button>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>MAC ঠিকানা</th>
+            <th>IP ঠিকানা</th>
+            <th>ইন্টারফেস</th>
+            <th>অবস্থা</th>
+            <th>অ্যাকশন</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in page_obj %}
+        <tr>
+            <td>{{ user.mac_address }}</td>
+            <td>{{ user.address }}</td>
+            <td>{{ user.interface }}</td>
+            <td>
+                {% if user.blocked %}
+                    <span style="color: red;">ব্লক</span>
+                {% else %}
+                    <span style="color: green;">অনব্লক</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if user.mac_address %}
+                    {% if user.blocked %}
+                        <a href="{% url 'toggle_block_status' user.mac_address %}" class="btn btn-success">আনব্লক</a>
+                    {% else %}
+                        <a href="{% url 'toggle_block_status' user.mac_address %}" class="btn btn-danger">ব্লক</a>
+                    {% endif %}
+                {% else %}
+                    <span>MAC ঠিকানা নেই</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" class="text-center">কোনো অনলাইন গ্রাহক পাওয়া যায়নি।</td>
+        </tr>
+        {% endfor %}
+            </tbody>
+    </table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">&laquo; প্রথম</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">পূর্ববর্তী</a>
+        {% endif %}
+
+        <span class="current">
+            পৃষ্ঠা {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">পরবর্তী</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">শেষ &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

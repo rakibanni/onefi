@@ -1,0 +1,27 @@
+{% extends 'billing/base.html' %}
+
+{% block title %}কালেক্টরদের হিসাব{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">কালেক্টরদের হিসাব</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>নাম</th>
+            <th>মোবাইল নাম্বার</th>
+            <th>রেফারাল কোড</th>
+            <th>মোট সংগ্রহ</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for collector in collectors %}
+        <tr>
+            <td>{{ collector.user.get_full_name }}</td>
+            <td>{{ collector.phone }}</td>
+            <td>{{ collector.referral_code }}</td>
+            <td>{{ collector.total_collection }} টাকা</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

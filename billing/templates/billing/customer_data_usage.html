@@ -1,0 +1,23 @@
+{% extends 'billing/base.html' %}
+
+{% block content %}
+<h2>গ্রাহকদের ডেটা ব্যবহার</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>গ্রাহক আইডি</th>
+            <th>নাম</th>
+            <th>ডেটা ব্যবহৃত (GB)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usage in data_usage %}
+        <tr>
+            <td>{{ usage.customer_id }}</td>
+            <td>{{ usage.name }}</td>
+            <td>In: {{ usage.gb_in|floatformat:2 }} GB, Out: {{ usage.gb_out|floatformat:2 }} GB</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'billing/base.html' %}
+
+{% block content %}
+<h2>লগইন</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">লগইন</button>
+</form>
+{% endblock %}

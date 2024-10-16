@@ -1,0 +1,90 @@
+{% extends 'billing/base.html' %}
+
+{% block title %}OneFi By IPG{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-center">OneFi By IPG</h1>
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">মোট আয়</h5>
+                <p class="card-text" id="total-income">{{ total_income }} টাকা</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">মোট বকেয়া</h5>
+                <p class="card-text" id="total-due">{{ total_due }} টাকা</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">মোট খরচ</h5>
+                <p class="card-text" id="total-expense">{{ total_expense }} টাকা</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">নতুন গ্রাহক যুক্ত</h5>
+                <p class="card-text" id="new-customers">{{ new_customers }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4 mb-3">
+        <a href="{% url 'add_customer' %}" class="btn btn-primary btn-block">
+            <i class="fas fa-user-plus"></i> গ্রাহক যুক্ত করুন
+        </a>
+    </div>
+    <div class="col-md-4 mb-3">
+        <a href="{% url 'add_payment' %}" class="btn btn-success btn-block">
+            <i class="fas fa-money-bill-wave"></i> বিল যুক্ত করুন
+        </a>
+    </div>
+    <div class="col-md-4 mb-3">
+        <a href="{% url 'collector_stats' %}" class="btn btn-info btn-block">
+            <i class="fas fa-chart-bar"></i> কালেকটরদের হিসাব দেখুন
+        </a>
+    </div>
+    <div class="col-md-4 mb-3">
+        <a href="{% url 'provide_internet' %}" class="btn btn-primary btn-block">
+            <i class="fas fa-network-wired"></i> ইন্টারনেট সংযোগ প্রদান
+        </a>
+    </div>
+    <div class="col-md-4 mb-3">
+        <a href="{% url 'online_customers' %}" class="btn btn-info btn-block">
+            <i class="fas fa-users"></i> অনলাইন গ্রাহক
+        </a>
+    </div>
+</div>
+
+<footer class="mt-5 text-center">
+    <p>This Project Is Made By RAKIB</p>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const dashboardSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/dashboard/'
+    );
+
+    dashboardSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        document.getElementById('total-income').textContent = data.total_income + ' টাকা';
+        document.getElementById('total-due').textContent = data.total_due + ' টাকা';
+        document.getElementById('total-expense').textContent = data.total_expense + ' টাকা';
+        document.getElementById('new-customers').textContent = data.new_customers;
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'billing/base.html' %}
+
+{% block title %}গ্রাহক তালিকা{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">গ্রাহক তালিকা</h1>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <input type="text" id="customer-search" class="form-control" placeholder="গ্রাহকের নাম বা আইডি দিয়ে খুঁজুন">
+    </div>
+    <div class="col-md-6">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-secondary" id="filter-all">সকল গ্রাহক</button>
+            <button type="button" class="btn btn-success" id="filter-paid">পেইড</button>
+            <button type="button" class="btn btn-danger" id="filter-unpaid">আনপেইড</button>
+            <select id="zone-filter" class="form-control ml-2">
+                <option value="">সব জোন</option>
+                {% for zone in zones %}
+                <option value="{{ zone.id }}">{{ zone.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>নাম</th>
+            <th>কাস্টমার আইডি</th>
+            <th>মোবাইল নাম্বার</th>
+            <th>ইন্টারনেট ব্যবহার জোন</th>
+            <th>মাসিক বিল</th>
+            <th>বকেয়া ব্যালেন্স</th>
+            <th>স্ট্যাটাস</th>
+            <th>বিল PDF</th>
+        </tr>
+    </thead>
+    <tbody id="customer-list">
+        {% for customer in customers %}
+        <tr data-paid="{{ customer.is_paid|yesno:'true,false' }}">
+            <td><a href="{% url 'customer_profile' customer.customer_id %}">{{ customer.name }}</a></td>
+            <td>{{ customer.customer_id }}</td>
+            <td>{{ customer.phone }}</td>
+            <td>{{ customer.zone.name }}</td>
+            <td>{{ customer.monthly_bill }}</td>
+            <td>{{ customer.due_balance }}</td>
+            <td>
+                {% if customer.is_paid %}
+                <a href="#" class="badge badge-success" data-toggle="tooltip" title="Last Payment: {{ customer.last_payment.amount }} on {{ customer.last_payment.date|date:'d/m/Y' }}">পেইড</a>
+                {% else %}
+                <a href="{% url 'add_payment_for_customer' customer.customer_id %}" class="badge badge-danger">আনপেইড</a>
+                {% endif %}
+            </td>
+            <td>
+                {% if customer.latest_bill %}
+                <a href="{% url 'view_bill_pdf' customer.latest_bill.id %}" class="btn btn-sm btn-primary">PDF দেখুন</a>
+                {% else %}
+                <span class="text-muted">কোনো বিল নেই</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>    
+</table>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#customer-search').on('keyup', function() {
+            var value = $(this).val().toLowerCase();
+            $("#customer-list tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+
+        $('#filter-all').click(function() {
+            $("#customer-list tr").show();
+        });
+
+        $('#filter-paid').click(function() {
+            $("#customer-list tr").hide();
+            $("#customer-list tr[data-paid='true']").show();
+        });
+
+        $('#filter-unpaid').click(function() {
+            $("#customer-list tr").hide();
+            $("#customer-list tr[data-paid='false']").show();
+        });
+        $('#zone-filter').change(function() {
+    var zoneId = $(this).val();
+    var currentUrl = new URL(window.location.href);
+    if (zoneId) {
+        currentUrl.searchParams.set('zone', zoneId);
+    } else {
+        currentUrl.searchParams.delete('zone');
+    }
+    window.location.href = currentUrl.toString();
+});
+
+    });
+</script>
+{% endblock %}

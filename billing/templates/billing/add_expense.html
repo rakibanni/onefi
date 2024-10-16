@@ -1,0 +1,12 @@
+{% extends 'billing/base.html' %}
+
+{% block title %}নতুন খরচ যোগ করুন{% endblock %}
+
+{% block content %}
+<h1>নতুন খরচ যোগ করুন</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">খরচ যোগ করুন</button>
+</form>
+{% endblock %}

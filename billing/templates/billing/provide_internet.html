@@ -1,0 +1,26 @@
+{% extends 'billing/base.html' %}
+
+{% block content %}
+<h2>ইন্টারনেট সংযোগ প্রদান</h2>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="customer_id">গ্রাহক আইডি:</label>
+        <input type="text" class="form-control" id="customer_id" name="customer_id" required>
+    </div>
+    <div class="form-group">
+        <label for="mac_address">MAC ঠিকানা:</label>
+        <input type="text" class="form-control" id="mac_address" name="mac_address" required>
+    </div>
+    <button type="submit" class="btn btn-primary">সংযোগ প্রদান</button>
+</form>
+{% endblock %}

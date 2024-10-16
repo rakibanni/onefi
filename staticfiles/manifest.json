@@ -1,0 +1,22 @@
+{
+    "name": "OneFi Mobile",
+    "short_name": "OneFi",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#000000",
+    "scope": "/",
+    "description": "OneFi Mobile Application",
+    "icons": [
+        {
+            "src": "/static/images/onefi.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/images/onefi2.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

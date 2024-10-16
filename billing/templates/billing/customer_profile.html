@@ -1,0 +1,106 @@
+{% extends 'billing/base.html' %}
+
+{% block title %}{{ customer.name }} - প্রোফাইল{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ customer.name }} - প্রোফাইল</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>গ্রাহকের তথ্য</h3>
+        <table class="table">
+            <tr>
+                <th>নাম:</th>
+                <td>{{ customer.name }}</td>
+            </tr>
+            <tr>
+                <th>মোবাইল নাম্বার:</th>
+                <td>{{ customer.phone }}</td>
+            </tr>
+            <tr>
+                <th>ঠিকানা:</th>
+                <td>{{ customer.address }}</td>
+            </tr>
+            <tr>
+                <th>মাসিক বিল:</th>
+                <td>{{ customer.monthly_bill }} টাকা</td>
+            </tr>
+            <tr>
+                <th>ইন্টারনেট ব্যবহার জোন:</th>
+                <td>{{ customer.zone.name }}</td>
+            </tr>
+            <tr>
+                <th>গ্রাহক আইডি:</th>
+                <td>{{ customer.customer_id }}</td>
+            </tr>
+            <tr>
+                <th>যুক্ত হওয়ার তারিখ:</th>
+                <td>{{ customer.join_date }}</td>
+            </tr>
+            <tr>
+                <th>রেফারার:</th>
+                <td>{{ customer.referrer.user.get_full_name }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="col-md-6">
+        <h3>পেমেন্ট হিস্টরি</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>তারিখ</th>
+                    <th>পরিমাণ</th>
+                    <th>কালেক্টর</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>{{ payment.date }}</td>
+                    <td>{{ payment.amount }} টাকা</td>
+                    <td>{{ payment.collector.user.get_full_name }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">কোনো পেমেন্ট রেকর্ড নেই</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- নতুন সেকশন: বিল PDF -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h3>বিল PDF</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>বিল তারিখ</th>
+                    <th>পরিমাণ</th>
+                    <th>স্ট্যাটাস</th>
+                    <th>অ্যাকশন</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bill in customer.bill_set.all %}
+                <tr>
+                    <td>{{ bill.generated_date }}</td>
+                    <td>{{ bill.amount }} টাকা</td>
+                    <td>{% if bill.is_paid %}পরিশোধিত{% else %}বাকি{% endif %}</td>
+                    <td>
+                        <a href="{% url 'view_bill_pdf' bill.id %}" class="btn btn-sm btn-primary">PDF দেখুন</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">কোনো বিল রেকর্ড নেই</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
